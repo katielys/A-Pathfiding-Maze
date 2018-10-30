@@ -3,16 +3,14 @@ import time
 import random
 from Heuristics import Heuristics
 def astar(maze, start, end):
-    """Returns a list of tuples as a path from the given start to the given end in the given maze"""
-    # Create start and end node
+ 
     start_node = Cell(None, start)
     start_node.g = start_node.h = start_node.f = 0
     end_node = Cell(None, end)
     end_node.g = end_node.h = end_node.f = 0
 
-    # Initialize both open and closed list
-    #open_list = []
-    open_list = set()
+    #Inicializa lista de abertos e fechados
+    open_list = []
     closed_list = []
 
     # Add the start node
@@ -57,10 +55,7 @@ def astar(maze, start, end):
             if maze[node_position[0]][node_position[1]] != 0:
                 continue
 
-            # Create new node
             new_node = Cell(current_node, node_position)
-
-            # Append
             children.append(new_node)
 
         # Loop through children
@@ -69,12 +64,14 @@ def astar(maze, start, end):
             # Child is on the closed list
             for closed_child in closed_list:
                 if child == closed_child:
+                    #break
                     continue
             heuristics = Heuristics()
             # Create the f, g, and h values
-            heuristics.manhattan(child,end_node,current_node)
+            heuristics.euclidean(child,end_node,current_node)
             for open_node in open_list:
                 if child == open_node and child.g > open_node.g:
+                    #break
                     continue
             open_list.append(child)
 
@@ -85,10 +82,10 @@ def generateMazeRandom(start,end,s,nwalls):
 	for x in range(0,nwalls):
 		i = random.randint(0,s)
 		j = random.randint(0,s)
-		if start[0] == i and start[1] == j:
+		while( start[0] != i and start[1] != j):
 			i = random.randint(0,s)
 			j = random.randint(0,s)
-		if end[0] == i and end[1] == j:
+		while( end[0] != i and end[1] != j):
 			i = random.randint(0,s)
 			j = random.randint(0,s)
 		maze[i][j] = 1;
@@ -106,7 +103,7 @@ def main():
 		print("START="+ str(start))
 		end = (random.randint(0,6), random.randint(0,6))
 		print("END="+ str(end))
-		maze = generateMazeRandom(start,end,6,5)
+		maze = generateMazeRandom(start,end,6,4)
 		begin = time.time()
 		path = astar(maze, start, end)
 		end= time.time()
